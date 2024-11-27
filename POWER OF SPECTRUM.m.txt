@@ -1,0 +1,33 @@
+% Define the signal
+fs = 10;           % Sampling frequency (Hz)
+t = 0:1/fs:1-1/fs;   % Time vector (1 second duration)
+f1 = 50;             % Frequency of signal component 1 (Hz)
+f2 = 120;            % Frequency of signal component 2 (Hz)
+x = sin(2*pi*f1*t) + 0.5*sin(2*pi*f2*t); % Example signal with two components
+
+% Compute the FFT of the signal
+N = length(x);           % Length of the signal
+X = fft(x);              % Compute FFT
+X_mag = abs(X) / N;      % Magnitude of FFT, normalized
+X_mag = X_mag(1:N/2+1);  % Take only the first half of the spectrum
+X_mag(2:end-1) = 2 * X_mag(2:end-1); % Double the magnitude (except DC and Nyquist)
+
+% Compute the Power Spectrum
+Power_Spectrum = X_mag.^2; % Power spectrum is the square of magnitude
+
+% Frequency vector for plotting
+f = (0:(N/2)) * (fs / N); % Frequency axis
+
+% Plot the Power Spectrum
+figure;
+plot(f, Power_Spectrum, 'b', 'LineWidth', 1.5);
+title('Power Spectrum of the Signal');
+xlabel('Frequency (Hz)');
+ylabel('Power');
+grid on;
+
+% Optional: Display the frequencies and their corresponding power values
+disp('Frequencies (Hz):');
+disp(f');
+disp('Power Spectrum:');
+disp(Power_Spectrum');

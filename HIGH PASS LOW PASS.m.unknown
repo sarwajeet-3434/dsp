@@ -1,0 +1,73 @@
+
+% Parameters for the filter 
+fs = 1000;           % Sampling frequency (Hz)
+fc = 200;            % Cutoff frequency (Hz)
+order = 50;          % Filter order (higher order for steeper roll-off)
+
+% Normalize the cutoff frequency
+fc_normalized = fc / (fs / 2); % Normalized frequency (0 to 1)
+
+% Design the high-pass FIR filter using a rectangular window
+% Ideal high-pass filter impulse response
+n = -(order/2):(order/2); % Filter length (assuming odd order for symmetry)
+h_ideal = sin(2 * pi * fc_normalized * n) ./ (pi * n); % Ideal high-pass filter
+h_ideal(order/2 + 1) = 1 - 2 * fc_normalized; % Handling the division by zero at n=0
+
+% Apply a rectangular window (i.e., no window)
+h = h_ideal;  % In this case, using a rectangular window (no modification)
+
+% Manually compute the frequency response using FFT
+N = 1024;  % Number of frequency points for the FFT
+H = fft(h, N);   % Compute the FFT of the filter
+f = (0:N-1) * (fs / N);  % Frequency axis (0 to fs)
+
+% Plot the filter coefficients
+figure;
+subplot(2, 1, 1);
+stem(n, h, 'b', 'LineWidth', 1.5);
+title('High-Pass FIR Filter Coefficients');
+xlabel('n');
+ylabel('Amplitude');
+grid on;
+
+% Plot the magnitude response of the filter
+subplot(2, 1, 2);
+plot(f, abs(H), 'r', 'LineWidth', 1.5);
+title('Magnitude Response of the High-Pass FIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+xlim([0 fs/2]);  % Display only the positive frequencies
+grid on;
+
+% Generate a test signal (low + high frequency components)
+t = 0:1/fs:1-1/fs;          % Time vector
+x = sin(2*pi*50*t) + sin(2*pi*300*t); % 50 Hz and 300 Hz components
+
+% Filter the test signal
+y = filter(h, 1, x);
+
+% Plot the original and filtered signals
+figure;
+subplot(2, 1, 1);
+plot(t, x, 'b', 'LineWidth', 1.5);
+title('Original Signal (50 Hz + 300 Hz)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+grid on;
+
+subplot(2, 1, 2);
+plot(t, y, 'r', 'LineWidth', 1.5);
+title('Filtered Signal (High-Pass FIR Filter Output)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+grid on;
+
+% Play the original and filtered signals
+disp('Playing Original Signal...');
+sound(x, fs);
+pause(2); % Wait for the sound to finish
+
+disp('Playing Filtered Signal...');
+sound(y, fs);
+
+%low pass filter

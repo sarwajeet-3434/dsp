@@ -1,0 +1,17 @@
+numerator = [1 2];  % Example: s + 2
+denominator = [1 3 2];  % Example: s^2 + 3s + 2
+
+% Define the impulse signal
+N = 50;  % Number of samples
+impulse_signal = [1; zeros(N-1, 1)];  % Impulse signal (delta function)
+
+% Compute the impulse response
+impulse_response = filter(numerator, denominator, impulse_signal);
+
+% Plot the impulse response
+figure;
+stem(0:N-1, impulse_response, 'b', 'LineWidth', 1.5);
+title('Impulse Response of the System');
+xlabel('n');
+ylabel('Amplitude');
+grid on;
