@@ -1,0 +1,54 @@
+% Define parameters
+fs = 80;        % Sampling frequency (Hz)
+duration = 0.5;   % Duration of each tone (seconds)
+t = 0:1/fs:duration-1/fs; % Time vector
+
+% DTMF frequency map (Hz)
+low_freqs = [697, 770, 852, 941]; % Low-frequency group
+high_freqs = [1209, 1336, 1477];  % High-frequency group
+
+% DTMF Keypad mapping
+keypad = ['1', '2', '3';
+          '4', '5', '6';
+          '7', '8', '9';
+          '*', '0', '#'];
+
+% Prompt the user to select a key
+disp('DTMF Keypad:');
+disp(keypad);
+key = input('Enter a DTMF key: ', 's');
+
+% Find the frequencies for the key
+[row, col] = find(keypad == key);
+if isempty(row) || isempty(col)
+    error('Invalid key entered!');
+end
+
+low_freq = low_freqs(row);  % Low-frequency tone
+high_freq = high_freqs(col); % High-frequency tone
+
+% Generate the DTMF signal
+signal = sin(2*pi*low_freq*t) + sin(2*pi*high_freq*t);
+
+% Plot the signal
+figure;
+subplot(2, 1, 1);
+plot(t, signal);
+title(['DTMF Signal for Key "', key, '"']);
+xlabel('Time (seconds)');
+ylabel('Amplitude');
+grid on;
+
+% Plot the spectrum
+subplot(2, 1, 2);
+N = length(signal);
+fft_signal = abs(fft(signal) / N);
+f = (0:N-1) * (fs / N); % Frequency vector
+plot(f(1:N/2), fft_signal(1:N/2));
+title('Frequency Spectrum of the DTMF Signal');
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+grid on;
+
+% Play the generated DTMF tone
+sound(signal, fs);

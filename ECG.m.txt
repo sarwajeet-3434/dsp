@@ -1,0 +1,41 @@
+% Parameters for the ECG signal
+fs = 500;        % Sampling frequency (Hz)
+duration = 2;    % Duration of the signal (seconds)
+t = 0:1/fs:duration; % Time vector
+
+% Parameters for ECG components
+HR = 60; % Heart rate (bpm)
+RR_interval = 60 / HR; % RR interval (seconds)
+
+% Generate a single ECG beat
+% Gaussian parameters for P-wave, QRS complex, and T-wave
+P_wave_amplitude = 0.1; P_wave_width = 0.1; P_wave_position = 0.2;
+QRS_amplitude = -1.0; QRS_width = 0.05; QRS_position = 0.5;
+T_wave_amplitude = 0.5; T_wave_width = 0.2; T_wave_position = 0.8;
+
+% Generate P-wave
+P_wave = P_wave_amplitude * exp(-((t - P_wave_position) / P_wave_width).^2);
+
+% Generate QRS complex
+QRS_complex = QRS_amplitude * exp(-((t - QRS_position) / QRS_width).^2);
+
+% Generate T-wave
+T_wave = T_wave_amplitude * exp(-((t - T_wave_position) / T_wave_width).^2);
+
+% Combine components for a single heartbeat
+single_beat = P_wave + QRS_complex + T_wave;
+
+% Repeat the heartbeat to form the full ECG signal
+num_beats = ceil(duration / RR_interval);
+ECG_signal = repmat(single_beat, 1, num_beats);
+
+% Adjust length to match the time vector
+ECG_signal = ECG_signal(1:length(t));
+
+% Plot the ECG signal
+figure;
+plot(t, ECG_signal, 'r', 'LineWidth', 1.5);
+title('Synthetic ECG Signal');
+xlabel('Time (seconds)');
+ylabel('Amplitude');
+grid on;

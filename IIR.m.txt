@@ -1,0 +1,117 @@
+% Parameters for the low-pass filter
+fs = 10;           % Sampling frequency (Hz)
+fc = 100;            % Cutoff frequency (Hz)
+order = 4;           % Filter order (higher order for steeper roll-off)
+
+% Normalize the cutoff frequency
+fc_normalized = fc / (fs / 2); % Normalized cutoff frequency (0 to 1)
+
+% Step 1: Analog Butterworth filter design (same as before)
+omega_c = tan(pi * fc_normalized); % Cutoff angular frequency (analog)
+theta = pi * (1 + 2*(0:order-1) + order) / (2 * order); % Angle for poles
+poles = omega_c * exp(1j * theta); % Complex poles
+
+% Step 2: Convert analog filter to digital using Bilinear Transform
+z_poles = (1 + poles) ./ (1 - poles);  % Apply the Bilinear Transform
+
+% Step 3: Calculate the filter coefficients from the poles
+b = 1; % Numerator for Butterworth filter (always 1)
+a = poly(z_poles); % Denominator coefficients (from poles)
+
+% Step 4: Apply the low-pass IIR filter to a given sequence
+t = 0:1/fs:1-1/fs;           % Time vector (1 second duration)
+x = sin(2*pi*50*t) + sin(2*pi*300*t); % Example signal: 50 Hz and 300 Hz components
+
+% Apply the low-pass IIR filter to the sequence using the filter function
+y = filter(b, a, x);  % Filtered output signal
+
+% Plot the original and filtered signals
+figure;
+subplot(2, 1, 1);
+plot(t, x, 'b', 'LineWidth', 1.5);
+title('Original Signal (50 Hz + 300 Hz)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+grid on;
+
+subplot(2, 1, 2);
+plot(t, y, 'r', 'LineWidth', 1.5);
+title('Filtered Signal (Low-Pass IIR Filter Output)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+grid on;
+
+% Step 5: Compute the frequency response manually using FFT
+N = 1024; % Number of points for FFT
+f = (0:N-1)*(fs/N);  % Frequency vector
+
+% Compute the frequency response by evaluating the transfer function H(z)
+% at the desired frequencies (using FFT)
+H = zeros(1, N);  % Initialize the frequency response array
+
+for k = 1:N
+    omega = 2*pi*f(k)/fs;  % Frequency at index k
+    H(k) = sum(b .* exp(-1j*omega*(0:length(b)-1))) / sum(a .* exp(-1j*omega*(0:length(a)-1)));
+end
+
+% Compute magnitude and phase of the frequency response
+magnitude = abs(H);   % Magnitude response
+phase = angle(H);     % Phase response
+
+% Plot magnitude and phase response
+figure;
+subplot(2, 1, 1);
+plot(f, magnitude, 'r', 'LineWidth', 1.5);
+title('Magnitude Response of the Low-Pass IIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+grid on;
+
+subplot(2, 1, 2);
+plot(f, phase, 'b', 'LineWidth', 1.5);
+title('Phase Response of the Low-Pass IIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('Phase (radians)');
+grid on;
+
+% Play the original and filtered signals (optional, requires sound card)
+disp('Playing Original Signal...');
+sound(x, fs);
+pause(2); % Wait for the sound to finish
+
+disp('Playing Filtered Signal...');
+sound(y, fs);
+
+
+%HIGH PASS filter
+
+clc;
+clear all;
+close all;
+% Enter filter specifications
+rp = input('Enter the passband ripple: ');
+rs = input('Enter the stopband ripple: ');
+wp = input('Enter the passband frequency: ');
+ws = input('Enter the stopband frequency: ');
+fs = input('Enter the sampling frequency: ');
+% Calculate normalized frequencies
+w1 = 2 * wp / fs;
+w2 = 2 * ws / fs;
+% Determine filter order
+[n,wn] = buttord(w1, w2, rp, rs);
+% Design Butterworth high-pass filter
+[b, a] = butter(n, wn, 'high');
+% Frequency response
+[H, F] = freqz(b, a, 512, fs);
+% Plot magnitude response
+subplot(2, 1, 1);
+plot(F, 20*log10(abs(H)));
+title('Magnitude Response ofHigh Pass IIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('Gain (dB)');
+% Plot phase response
+subplot(2, 1, 2);
+plot(F, angle(H));
+title('PhaseResponse ofHigh Pass IIR Filter');
+xlabel('Frequency (Hz)');
+ylabel('Phase (Radians)');

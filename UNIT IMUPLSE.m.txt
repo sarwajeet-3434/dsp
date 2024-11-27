@@ -1,0 +1,52 @@
+% Parameters
+n = -10:10; % Discrete time index
+fs = 100;   % Sampling frequency (Hz)
+
+% Unit Impulse Signal
+unit_impulse = (n == 0);
+figure;
+stem(n, unit_impulse, 'r', 'LineWidth', 1.5);
+title('Unit Impulse Signal');
+xlabel('n');
+ylabel('Amplitude');
+grid on;
+
+% Unit Step Signal
+unit_step = (n >= 0); % u[n]
+figure;
+stem(n, unit_step, 'g', 'LineWidth', 1.5);
+title('Unit Step Signal');
+xlabel('n');
+ylabel('Amplitude');
+grid on;
+
+% Sinusoidal Signal
+f_sin = 1; % Frequency of the sinusoidal signal (Hz)
+sinusoidal = sin(2 * pi * f_sin * n / fs);
+figure;
+stem(n, sinusoidal, 'b', 'LineWidth', 1.5);
+title('Sinusoidal Signal');
+xlabel('n');
+ylabel('Amplitude');
+grid on;
+
+% Cosine Signal
+f_cos = 1; % Frequency of the cosine signal (Hz)
+cosine = cos(2 * pi * f_cos * n / fs);
+figure;
+stem(n, cosine, 'm', 'LineWidth', 1.5);
+title('Cosine Signal');
+xlabel('n');
+ylabel('Amplitude');
+grid on;
+
+% Sawtooth Wave Signal
+T = 5; % Period of the sawtooth wave
+sawtooth_wave = mod(n, T) / T; % Sawtooth wave calculation
+figure;
+stem(n, sawtooth_wave, 'k', 'LineWidth', 1.5);
+title('Sawtooth Wave');
+xlabel('n');
+ylabel('Amplitude');
+grid on;
+
