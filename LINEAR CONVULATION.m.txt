@@ -1,19 +1,28 @@
 % MATLAB code to find linear convolution of two sequences
-% Define the two sequences x = [1, 2,
-3, 4]; % Example sequence x[n] h = [1,
-1, 1]; % Example sequence h[n]
-% Perform linear convolution using the conv()
-function y = conv(x, h);
-% Display the output disp('The linear convolution of
-the two sequences is:'); disp(y);
+
+% Define the two sequences
+x = [1, 2, 3, 4]; % Example sequence x[n]
+h = [1, 1, 1];    % Example sequence h[n]
+
+% Perform linear convolution using the conv() function
+y = conv(x, h);
+
+% Display the output
+disp('The linear convolution of the two sequences is:');
+disp(y);
+
 % Plot the sequences and the convolution result
-subplot(3, 1, 1); stem(x); title('Sequence x[n]');
+subplot(3, 1, 1);
+stem(0:length(x)-1, x, 'filled'); % Adjust the x-axis for sequence x[n]
+title('Sequence x[n]');
 xlabel('n'); ylabel('x[n]');
+
 subplot(3, 1, 2);
-stem(h); title('Sequence
-h[n]'); xlabel('n');
-ylabel('h[n]');
-subplot(3, 1, 3); stem(y);
-title('Convolution Result
-y[n]'); xlabel('n');
-ylabel('y[n]')
+stem(0:length(h)-1, h, 'filled'); % Adjust the x-axis for sequence h[n]
+title('Sequence h[n]');
+xlabel('n'); ylabel('h[n]');
+
+subplot(3, 1, 3);
+stem(0:length(y)-1, y, 'filled'); % Adjust the x-axis for the result y[n]
+title('Convolution Result y[n]');
+xlabel('n'); ylabel('y[n]');
