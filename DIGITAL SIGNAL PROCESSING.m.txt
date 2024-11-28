@@ -1,5 +1,5 @@
 % Define parameters
-fs = 80;        % Sampling frequency (Hz)
+fs = 8000;        % Sampling frequency (Hz) - Increased to 8000 Hz for better audio quality
 duration = 0.5;   % Duration of each tone (seconds)
 t = 0:1/fs:duration-1/fs; % Time vector
 
@@ -44,7 +44,7 @@ subplot(2, 1, 2);
 N = length(signal);
 fft_signal = abs(fft(signal) / N);
 f = (0:N-1) * (fs / N); % Frequency vector
-plot(f(1:N/2), fft_signal(1:N/2));
+plot(f(1:N/2), fft_signal(1:N/2)); % Only plot the positive half of the spectrum
 title('Frequency Spectrum of the DTMF Signal');
 xlabel('Frequency (Hz)');
 ylabel('Magnitude');
